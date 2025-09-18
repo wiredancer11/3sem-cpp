@@ -1,16 +1,22 @@
-#include <cstdlib>
 #include <iomanip>
 #include <iostream>
 #include <ostream>
 #include <random>
 #include <vector>
 #include <fstream>
+#include "my_gen.h"
 
 template<typename GeneratorType>
 void generate_ints(std::vector<int>& numbers_count, GeneratorType& generator) {
     std::uniform_int_distribution<int> distrib(0, 100);
     for (int i = 0; i < 1000000; i++) {
         numbers_count[distrib(generator)]++;
+    }
+}
+
+void generate_ints_from_func(std::vector<int>& numbers_count, int (*generator)(int, int)) {
+    for (int i = 0; i < 1000000; i++) {
+        numbers_count[generator(0, 100)]++;
     }
 }
 
@@ -81,6 +87,18 @@ int main() {
     diagram.open("diagrams/knuth.txt");
     numbers_count = std::vector<int>(101, 0);
     generate_ints(numbers_count, knuth);
+    draw_diagram(numbers_count, diagram);
+    diagram.close();
+
+    diagram.open("diagrams/c_rand.txt");
+    numbers_count = std::vector<int>(101, 0);
+    generate_ints_from_func(numbers_count, gen_rand);
+    draw_diagram(numbers_count, diagram);
+    diagram.close();
+
+    diagram.open("diagrams/c_rand_mod.txt");
+    numbers_count = std::vector<int>(101, 0);
+    generate_ints_from_func(numbers_count, gen_rand_mod);
     draw_diagram(numbers_count, diagram);
     diagram.close();
 }

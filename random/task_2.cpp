@@ -4,6 +4,7 @@
 #include <random>
 #include <vector>
 #include <fstream>
+#include "my_gen.h"
 
 template<typename GeneratorType>
 void generate_pic(std::vector<std::vector<int>>& field, GeneratorType& gen) {
@@ -13,6 +14,15 @@ void generate_pic(std::vector<std::vector<int>>& field, GeneratorType& gen) {
             point = distrib(gen);
         }
     }
+}
+
+void generate_pic_with_func(std::vector<std::vector<int>>& field, int (*gen)(int, int)) {
+    for (auto& row: field) {
+        for (auto& point : row) {
+            point = gen(0, 1);
+        }
+    }
+
 }
 
 void draw_pic(std::vector<std::vector<int>> const & field, std::ostream& out) {
@@ -60,4 +70,13 @@ int main() {
     draw_pic(field, picture);
     picture.close();
 
+    picture.open("pictures/c_rand.txt");
+    generate_pic_with_func(field, gen_rand);
+    draw_pic(field, picture);
+    picture.close();
+
+    picture.open("pictures/c_rand_mod.txt");
+    generate_pic_with_func(field, gen_rand_mod);
+    draw_pic(field, picture);
+    picture.close();
 }
